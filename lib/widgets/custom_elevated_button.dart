@@ -19,8 +19,7 @@ class CustomElevatedButton extends StatelessWidget {
       icon: buttonIcon,
       iconAlignment: IconAlignment.end,
       style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
+          
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
     );

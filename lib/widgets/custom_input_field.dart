@@ -8,12 +8,16 @@ class CustomInputField extends StatelessWidget {
     required this.labelText,
     required this.hint,
     required this.textInputType,
+    this.check,
+    this.leadingIcon,
   });
 
   TextEditingController inputController;
   Text labelText;
   String hint;
   TextInputType textInputType;
+  Widget? leadingIcon;
+FormFieldValidator<String>? check;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,6 +29,8 @@ class CustomInputField extends StatelessWidget {
         decoration: InputDecoration(
             label: labelText,
             hintText: hint,
+            prefixIcon: leadingIcon,
+            
             labelStyle: TextStyle(color: Colors.white),
             hintStyle: TextStyle(color: Colors.white),
             border: OutlineInputBorder(
@@ -35,6 +41,7 @@ class CustomInputField extends StatelessWidget {
             ),
             focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.purple))),
+                validator: check ,
       ),
     );
   }

@@ -173,148 +173,151 @@ void showGenderSelectionDialog(BuildContext context, String currentGender) {
         title: Text('Profile Page'),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          
-        child: isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : userData == null
-                ? const Center(
-                    child: Text('Failed to load user data'),
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 40, bottom: 15),
-                        alignment: Alignment.center,
-                        child: Column(
-                          children: [
-                            Stack(
-                              children: [
-                                ClipOval(
-                                  child: userData?['profilepic'] != null
-                                      ? Image.network(
-                                          userData!['profilepic'],
-                                          fit: BoxFit.cover,
-                                          height: 100,
-                                          width: 100,
-                                        )
-                                      : const Image(
-                                          fit: BoxFit.cover,
-                                          height: 100,
-                                          width: 100,
-                                          image:
-                                              AssetImage('images/profile.jpg'),
-                                        ),
-                                ),
-                                Positioned(
-                                  right: -12,
-                                  bottom: 0,
-                                  child: IconButton(
-                                    icon: Icon(Icons.photo_camera,color: Colors.purple,size: 30,),
-                                    onPressed: uploadImage,
+        child: Padding(
+          padding: EdgeInsets.all(15),
+          child: SingleChildScrollView(
+            
+          child: isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : userData == null
+                  ? const Center(
+                      child: Text('Failed to load user data'),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 40, bottom: 15),
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  ClipOval(
+                                    child: userData?['profilepic'] != null
+                                        ? Image.network(
+                                            userData!['profilepic'],
+                                            fit: BoxFit.cover,
+                                            height: 100,
+                                            width: 100,
+                                          )
+                                        : const Image(
+                                            fit: BoxFit.cover,
+                                            height: 100,
+                                            width: 100,
+                                            image:
+                                                AssetImage('images/profile.jpg'),
+                                          ),
                                   ),
+                                  Positioned(
+                                    right: -12,
+                                    bottom: 0,
+                                    child: IconButton(
+                                      icon: Icon(Icons.photo_camera,),
+                                      onPressed: uploadImage,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                userData?['username'] ?? 'No username',
+                                style: Theme.of(context).textTheme.headlineLarge,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            infoLabel(label: 'Bio'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                info(info: userData?['bio'] ?? 'Add bio'),
+                                IconButton(
+                                  onPressed: () {
+                                    showEditDialog(
+                                        context, 'bio', userData?['bio'] ?? '');
+                                  },
+                                  icon: const Icon(Icons.edit),
                                 ),
                               ],
                             ),
-                            Text(
-                              userData?['username'] ?? 'No username',
-                              style: Theme.of(context).textTheme.headlineLarge,
+                            Divider(),
+                            infoLabel(label: 'Gender'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                info(info: userData?['gender'] ?? 'Add Gender'),
+                                IconButton(
+                                  onPressed: () {
+                                    showGenderSelectionDialog(context, userData?['gender'] ?? '');
+                                  },
+                                  icon: const Icon(Icons.edit),
+                                ),
+                              ],
                             ),
+                            Divider(),
+                            infoLabel(label: 'Email'),
+                            info(info: userData?['email']),
+                            Divider(),
+                            infoLabel(label: 'Username'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                info(info: userData?['username']),
+                                IconButton(
+                                  onPressed: () {
+                                    showEditDialog(context, 'username',
+                                        userData?['username'] ?? '');
+                                  },
+                                  icon: const Icon(Icons.edit),
+                                ),
+                              ],
+                            ),
+                            Divider(),
+                            infoLabel(label: 'Phone Number'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                info(
+                                    info:
+                                        userData?['phone'] ?? 'Add phone number'),
+                                IconButton(
+                                  onPressed: () {
+                                    showEditDialog(context, 'phone',
+                                        userData?['phone'] ?? '');
+                                  },
+                                  icon: const Icon(Icons.add),
+                                ),
+                              ],
+                            ),
+                            Divider(),
                           ],
                         ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          infoLabel(label: 'Bio'),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              info(info: userData?['bio'] ?? 'Add bio'),
-                              IconButton(
-                                onPressed: () {
-                                  showEditDialog(
-                                      context, 'bio', userData?['bio'] ?? '');
-                                },
-                                icon: const Icon(Icons.edit),
-                              ),
-                            ],
+                        Container(
+                          margin: const EdgeInsets.only(top: 30),
+                          alignment: Alignment.center,
+                          child: CustomElevatedButton(
+                            label: const Text('Log out'),
+                            buttonIcon: const Icon(Icons.logout),
+                            onPressed: () async {
+                              await FirebaseAuth.instance.signOut();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AuthGate(),
+                                ),
+                              );
+                            },
                           ),
-                          Divider(),
-                          infoLabel(label: 'Gender'),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              info(info: userData?['gender'] ?? 'Add Gender'),
-                              IconButton(
-                                onPressed: () {
-                                  showGenderSelectionDialog(context, userData?['gender'] ?? '');
-                                },
-                                icon: const Icon(Icons.edit),
-                              ),
-                            ],
-                          ),
-                          Divider(),
-                          infoLabel(label: 'Email'),
-                          info(info: userData?['email']),
-                          Divider(),
-                          infoLabel(label: 'Username'),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              info(info: userData?['username']),
-                              IconButton(
-                                onPressed: () {
-                                  showEditDialog(context, 'username',
-                                      userData?['username'] ?? '');
-                                },
-                                icon: const Icon(Icons.edit),
-                              ),
-                            ],
-                          ),
-                          Divider(),
-                          infoLabel(label: 'Phone Number'),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              info(
-                                  info:
-                                      userData?['phone'] ?? 'Add phone number'),
-                              IconButton(
-                                onPressed: () {
-                                  showEditDialog(context, 'phone',
-                                      userData?['phone'] ?? '');
-                                },
-                                icon: const Icon(Icons.add),
-                              ),
-                            ],
-                          ),
-                          Divider(),
-                        ],
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 30),
-                        alignment: Alignment.center,
-                        child: CustomElevatedButton(
-                          label: const Text('Log out'),
-                          buttonIcon: const Icon(Icons.logout),
-                          onPressed: () async {
-                            await FirebaseAuth.instance.signOut();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AuthGate(),
-                              ),
-                            );
-                          },
                         ),
-                      ),
-                    ],
-                  ),
-      ),
+                      ],
+                    ),
+                ),
+        ),
     ));
   }
 

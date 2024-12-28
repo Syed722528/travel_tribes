@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_learn/components/select_des.dart';
+import 'package:firebase_learn/screens/explore_paces.dart';
 import 'package:firebase_learn/screens/admin_page.dart';
+import 'package:firebase_learn/screens/chat_page.dart';
 import 'package:firebase_learn/screens/faqs_page.dart';
-import 'package:firebase_learn/screens/friend_page.dart';
+import 'package:firebase_learn/screens/add_friend_page.dart';
 import 'package:firebase_learn/screens/notification_page.dart';
-import 'package:firebase_learn/screens/places_page.dart';
+import 'package:firebase_learn/components/places_page.dart';
 import 'package:firebase_learn/screens/profile_page.dart';
 import 'package:firebase_learn/services/auth/auth_gate.dart';
 import 'package:firebase_learn/widgets/custom_drawer_list_tile.dart';
-import 'package:firebase_learn/components/top_place_tile.dart';
+import 'package:firebase_learn/components/palce_tile.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -45,7 +48,7 @@ class _HomePageState extends State<HomePage> {
       drawer: _buildDrawer(auth),
       body:
 
-          //-----------------------------------Home Tile of homePage----------------------------//
+          //-----------------------------------Top Places Tile of homePage----------------------------//
 
           selectedIndex == 0
               ? SafeArea(
@@ -97,16 +100,86 @@ class _HomePageState extends State<HomePage> {
                                           place['title'] ?? 'No title';
                                       final imageUrl = place['image'] ?? '';
 
-                                      return TopPlacesTile(
+                                      return PlaceTile(
+                                        useGradient: false,
+                                        imagePath: imageUrl,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => PlacesPage(
+                                                placeId: place.id,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        title: title,
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+
+// --------------------------------------------- Explore Section -------------------------------- //
+
+                          const SizedBox(height: 10),
+                          Text(
+                            'Explore Places',
+                            style: Theme.of(context).textTheme.headlineLarge,
+                          ),
+                          const SizedBox(height: 10),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            height: 300,
+                            child: StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('places')
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+
+                                if (snapshot.hasError) {
+                                  return const Center(
+                                      child: Text('Error loading places'));
+                                }
+
+                                // Parse Firestore data
+                                final placesDocs = snapshot.data?.docs ?? [];
+
+                                if (placesDocs.isEmpty) {
+                                  return const Center(
+                                      child: Text('No places available.'));
+                                }
+
+                                return SizedBox(
+                                  height: 300,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: placesDocs.length,
+                                    itemBuilder: (context, index) {
+                                      final place = placesDocs[index];
+                                      final title =
+                                          place['title'] ?? 'No title';
+                                      final imageUrl = place['image'] ?? '';
+                                      return PlaceTile(
+                                        useGradient: false,
                                         imagePath: imageUrl,
                                         onTap: () {
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      PlacesPage()));
+                                                      ExplorePaces(
+                                                        placeId: place.id,
+                                                      )));
                                         },
-                                        title: title,
+                                        title: 'In $title',
                                       );
                                     },
                                   ),
@@ -124,7 +197,7 @@ class _HomePageState extends State<HomePage> {
               //--------------------------------------Friends tab of HomePage ------------------------------//
 
               selectedIndex == 1
-                  ? FriendPage()
+                  ? AddFriendPage()
                   : Container(
                       color: Colors.yellow,
                     ),
@@ -135,17 +208,19 @@ class _HomePageState extends State<HomePage> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.people_alt_outlined), label: 'Add Friends'),
+                icon: Icon(Icons.person_add), label: 'Add Friends'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.location_on_outlined),
-                label: 'Location Services'),
+                icon: Icon(Icons.person_3), label: 'Friends'),
           ],
           currentIndex: selectedIndex,
           onTap: onItemTapped,
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => DestinationFormPage()));
+        },
         child: Icon(Icons.merge_outlined),
       ),
     );
@@ -205,7 +280,10 @@ class _HomePageState extends State<HomePage> {
         ),
         IconButton(
           icon: const Icon(Icons.message),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => ChatPage()));
+          },
         ),
       ],
     );
@@ -235,10 +313,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 CustomDrawerListTile(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FaqsPage()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => FaqsPage()));
                   },
                   title: 'FAQs',
                   icon: const Icon(Icons.question_mark_rounded),
@@ -264,8 +340,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  // Data for Top Places
-
-  // Generate Top Places Tiles Dynamically
 }

@@ -110,6 +110,12 @@ class _LoginPageState extends State<LoginPage> {
                         labelText: const Text('Email'),
                         hint: 'Email',
                         textInputType: TextInputType.emailAddress,
+                  //       check: (value) {
+                  //          if (value == null || value.isEmpty) {
+                  //   return 'Please enter your email';
+                  // }
+                  // return null;
+                  //       },
                       ),
                     ),
                     Padding(
@@ -119,6 +125,12 @@ class _LoginPageState extends State<LoginPage> {
                         labelText: const Text('Password'),
                         hint: 'Password',
                         textInputType: TextInputType.text,
+                  //       check: (value) {
+                  //          if (value == null || value.isEmpty) {
+                  //   return 'Please enter your password';
+                  // }
+                  // return null;
+                  //       },
                       ),
                     ),
                     SizedBox(

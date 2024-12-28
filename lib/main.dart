@@ -10,6 +10,7 @@ void main() async {
     options: DefaultFirebaseOptions.android,
   );
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
@@ -26,3 +27,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

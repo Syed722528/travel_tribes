@@ -33,6 +33,7 @@ ThemeData darktheme = ThemeData(
    
     textTheme: TextTheme(
       headlineLarge: TextStyle(color: Colors.white, fontSize: 35),
+      
     ),
 
 //--------------------------- Drawer Theme ---------------------//
